@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if order %}
+  <h1 class="display-6 ml-5 mt-2 mb-2">Your Order Details</h1>
+    <div class="container">
+      <dl class="row">
+        <dt class="col-sm-3">Order Id</dt>
+        <dd class="col-sm-9">{{ order.id }}</dd>
+
+        <dt class="col-sm-3">Value</dt>
+        <dd class="col-sm-9">{{ order.value }}</dd>
+
+        <dt class="col-sm-3">Despatch Date</dt>
+        <dd class="col-sm-9">{{ order.despatch_date }}</dd>
+
+        <dt class="col-sm-3">Contents</dt>
+        <dd class="col-sm-9">{{ order.contents_declaration }}</dd>
+
+        <dt class="col-sm-3">Insurance Required</dt>
+        <dd class="col-sm-9">{{ order.insurance_required }}</dd>
+
+        <dt class="col-sm-3">Tracking Reference</dt>
+        <dd class="col-sm-9">{{ order.tracking_reference }}</dd>
+
+        <dt class="col-sm-3">Accepted at</dt>
+        <dd class="col-sm-9">{{ order.accepted_at }}</dd>
+
+        <dt class="col-sm-3">Insurance Provided</dt>
+        <dd class="col-sm-9">{{ order.insurance_provided }}</dd>
+
+        <dt class="col-sm-3">Insurance Charge</dt>
+        <dd class="col-sm-9">{{ order.total_insurance_charge }}</dd>
+
+        <dt class="col-sm-3">IPT included in charge</dt>
+        <dd class="col-sm-9">{{ order.ipt_included_in_charge }}</dd>
+
+        <dt class="col-sm-3">Sender</dt>
+        <dd class="col-sm-9">
+          <dl class="row">
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">{{ sender.name }}</dd>
+            <dt class="col-sm-4">Street Address</dt>
+            <dd class="col-sm-8">{{ sender.street_address }}</dd>
+            <dt class="col-sm-4">City</dt>
+            <dd class="col-sm-8">{{ sender.city }}</dd>
+            <dt class="col-sm-4">Country Code</dt>
+            <dd class="col-sm-8">{{ sender.country_code }}</dd>
+          </dl>
+        </dd>
+
+        <dt class="col-sm-3">Recipient</dt>
+        <dd class="col-sm-9">
+          <dl class="row">
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">{{ recipient.name }}</dd>
+            <dt class="col-sm-4">Street Address</dt>
+            <dd class="col-sm-8">{{ recipient.street_address }}</dd>
+            <dt class="col-sm-4">City</dt>
+            <dd class="col-sm-8">{{ recipient.city }}</dd>
+            <dt class="col-sm-4">Country Code</dt>
+            <dd class="col-sm-8">{{ recipient.country_code }}</dd>
+          </dl>
+        </dd>
+      </dl>
+    </div>
+
+  {% endif %}
+
+{% endblock content %}

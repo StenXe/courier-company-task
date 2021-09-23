@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="alert alert-danger" role="alert" style="display:none" id="ajax-error-order-not-processed-alert">
+
+  </div>
+  <div class="alert alert-danger" role="alert" style="display:none" id="ajax-error-alert">
+    An error occurred while submitting your order. Please try again later.
+  </div>
+  <div class="alert alert-success" role="alert" id="ajax-success-alert" style="display:none">
+  Your order has been submitted. You can check the order details <a href="#" class="alert-link">here</a>.
+</div>
+  <form action="/orders" method="post" id="orderForm">
+    <legend>Get Package Insurance Today!</legend>
+
+    <label for="sender_info">Sender Information</label>
+    <div class="form-row" id="sender_info">
+        <div class="form-group col-md-3">
+          <label for="sender_name">Name</label>
+          <input type="text" class="form-control" name="sender_name" id="sender_name">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="sender_addr">Street Address</label>
+          <input type="text" class="form-control" name="sender_addr" id="sender_addr">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="sender_city">City</label>
+          <input type="text" class="form-control" name="sender_city" id="sender_city">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="sender_cntcd">Country</label>
+          <select class="form-control" name="sender_cntcd" id="sender_cntcd">
+            {% for option in country_codes %}
+              <option value="{{ option.country_code }}">{{ option.country_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+    <label for="recipient_info">Recipient Information</label>
+    <div class="form-row" id="recipient_info">
+        <div class="form-group col-md-3">
+          <label for="recipient_name">Name</label>
+          <input type="text" class="form-control" name="recipient_name" id="recipient_name">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="recipient_addr">Street Address</label>
+          <input type="text" class="form-control" name="recipient_addr" id="recipient_addr">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="recipient_city">City</label>
+          <input type="text" class="form-control" name="recipient_city" id="recipient_city">
+        </div>
+        <div class="form-group col-md-3">
+          <label for="recipient_cntcd">Country</label>
+          <select class="form-control" name="recipient_cntcd" id="recipient_cntcd">
+            {% for option in country_codes %}
+              <option value="{{ option.country_code }}">{{ option.country_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="order_value">Order Value</label>
+          <input type="number" class="form-control" name="order_value" id="order_value">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="despatch_date">Despatch Date</label>
+          <input type="date" class="form-control" name="despatch_date" id="despatch_date">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contents_declaration">Contents Declaration</label>
+        <input type="text" class="form-control" name="contents_declaration" id="contents_declaration">
+      </div>
+
+      <div class="form-group">
+        <label for="tracking_reference">Tracking Reference</label>
+        <input type="text" class="form-control" name="tracking_reference" id="tracking_reference">
+      </div>
+
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="insurance_required" id="insurance_required">
+        <label class="form-check-label" for="insurance_required">Insure my package</label>
+      </div>
+      <button type="button" class="btn btn-primary mt-3" onclick="submitForm()">Submit</button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  function submitForm(){
+
+    requestJson = {};
+
+    requestJson['sender'] = {'name':document.getElementById('sender_name').value,
+                              'street_address':document.getElementById('sender_addr').value,
+                              'city':document.getElementById('sender_city').value,
+                              'country_code':document.getElementById('sender_cntcd').value};
+
+    requestJson['recipient'] = {'name':document.getElementById('recipient_name').value,
+                                'street_address':document.getElementById('recipient_addr').value,
+                                'city':document.getElementById('recipient_city').value,
+                                'country_code':document.getElementById('recipient_cntcd').value};
+
+    requestJson['value'] = document.getElementById('order_value').value;
+    requestJson['despatch_date'] = document.getElementById('despatch_date').value;
+    requestJson['contents declaration'] = document.getElementById('contents_declaration').value;
+    requestJson['tracking_reference'] = document.getElementById('tracking_reference').value;
+    requestJson['insurance_required'] = document.getElementById('insurance_required').checked;
+
+
+    var orderFormData = JSON.stringify(requestJson);
+    $.ajax({
+      type: "PUT",
+      url: "/orders",
+      data: orderFormData,
+      success: function(result, status, xhr){
+
+        text = document.getElementById('ajax-success-alert').innerHTML
+        text = text.replace("#", result['order_url']);
+        document.getElementById('ajax-success-alert').innerHTML = text;
+
+        $("#ajax-error-alert").hide();
+        $("#ajax-error-order-not-processed-alert").hide();
+        $("#ajax-success-alert").show();
+        $("#orderForm")[0].reset();
+
+      },
+      error: function(xhr, status, error){
+
+        $("#ajax-success-alert").hide();
+
+        if(xhr.responseText.includes("message")){
+          var jsonResponse = JSON.parse(xhr.responseText);
+          document.getElementById('ajax-error-order-not-processed-alert').innerHTML = jsonResponse['message'];
+          $("#ajax-error-alert").hide();
+          $("#ajax-error-order-not-processed-alert").show();
+        }else{
+          $("#ajax-error-order-not-processed-alert").hide();
+          $("#ajax-error-alert").show();
+        }
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  }
+
+</script>
+{% endblock content %}
